@@ -47,21 +47,17 @@ namespace AntiPlatPlugin
 
         private void OnGetData(GetDataEventArgs args)
         {
-            for (int ii = 0; ii < 58; ii++)
+            foreach (TSPlayer plr in GetLoggedInPlayers())
             {
-                foreach (TSPlayer plr in GetLoggedInPlayers())
+                for (int i = 0; i < 58; i++)
                 {
-                    for (int i = 0; i < 58; i++)
+                    if (plr.TPlayer.inventory[i].type == ItemID.PlatinumCoin &&
+                        plr.TPlayer.inventory[i].stack == 999)
                     {
-                        if (plr.TPlayer.inventory[ii].type == ItemID.PlatinumCoin &&
-                            plr.TPlayer.inventory[ii].stack == 999)
-                        {
-                            NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, plr.Index, (float)ii);
-                        }
+                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, plr.Index, (float)i);
                     }
                 }
             }
         }
-
     }
 }
