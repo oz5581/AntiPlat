@@ -28,14 +28,14 @@ namespace AntiPlatPlugin
 
         public override void Initialize()
         {
-            ServerApi.Hooks.NetGetData.Register(this, OnGetData);
+            ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                ServerApi.Hooks.NetGetData.Deregister(this, OnGetData);
+                ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
             }
             base.Dispose(disposing);
         }
@@ -45,16 +45,20 @@ namespace AntiPlatPlugin
             return TShock.Players.Where(p => p != null && p.IsLoggedIn);
         }
 
-        private void OnGetData(GetDataEventArgs args)
+        private void OnUpdate(EventArgs args)
         {
-            foreach (TSPlayer plr in GetLoggedInPlayers())
+            // Check for 999 platinum coins every 15 frames
+            if (Main.GameUpdateCount % 4 == 0)
             {
-                for (int i = 0; i < 58; i++)
+                foreach (TSPlayer plr in GetLoggedInPlayers())
                 {
-                    if (plr.TPlayer.inventory[i].type == ItemID.PlatinumCoin &&
-                        plr.TPlayer.inventory[i].stack == 999)
+                    for (int i = 0; i < 58; i++)
                     {
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, plr.Index, (float)i);
+                        if (plr.TPlayer.inventory[i].type == ItemID.PlatinumCoin &&
+                            plr.TPlayer.inventory[i].stack == 999)
+                        {
+                            NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, plr.Index, i);
+                        }
                     }
                 }
             }
