@@ -47,6 +47,26 @@ namespace AntiPlatPlugin
             return TShock.Players.Where(p => p != null && p.IsLoggedIn);
         }
 
+        private void CheckSlot(TSPlayer player, int slot)
+        {
+            Item itemToCheck = (
+                (slot >= 220) ? player.TPlayer.bank4.item[slot - 220] :
+                ((slot >= 180) ? player.TPlayer.bank3.item[slot - 180] : 
+                ((slot >= 179) ? player.TPlayer.trashItem : 
+                ((slot >= 139) ? player.TPlayer.bank2.item[slot - 139] : 
+                ((slot >= 99) ? player.TPlayer.bank.item[slot - 99] : 
+                ((slot >= 94f) ? player.TPlayer.miscDyes[slot - 94] : 
+                ((slot >= 89) ? player.TPlayer.miscEquips[slot - 89] : 
+                ((slot >= 79) ? player.TPlayer.dye[slot - 79] : 
+                ((!(slot >= 59)) ? player.TPlayer.inventory[slot] : player.TPlayer.armor[slot - 59])))))))));
+
+            if (itemToCheck.type == ItemID.PlatinumCoin &&
+                itemToCheck.stack == 999)
+            {
+                NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
+            }
+        }
+
         private void OnUpdate(EventArgs args)
         {
             UpdateCount++;
@@ -58,11 +78,7 @@ namespace AntiPlatPlugin
                 {
                     for (int i = 0; i < 260; i++)
                     {
-                        if (plr.TPlayer.inventory[i].type == ItemID.PlatinumCoin &&
-                            plr.TPlayer.inventory[i].stack == 999)
-                        {
-                            NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, plr.Index, i);
-                        }
+                        CheckSlot(plr, i);
                     }
                 }
             }
