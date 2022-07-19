@@ -21,6 +21,8 @@ namespace AntiPlatPlugin
 
         public override Version Version => new Version(1, 0, 0, 0);
 
+        private ulong UpdateCount = 0;
+
         public AntiPlat(Main game) : base(game)
         {
 
@@ -47,12 +49,14 @@ namespace AntiPlatPlugin
 
         private void OnUpdate(EventArgs args)
         {
+            UpdateCount++;
+
             // Check for 999 platinum coins every 15 frames
-            if (Main.GameUpdateCount % 4 == 0)
+            if (UpdateCount % 4 == 0)
             {
                 foreach (TSPlayer plr in GetLoggedInPlayers())
                 {
-                    for (int i = 0; i < 58; i++)
+                    for (int i = 0; i < 260; i++)
                     {
                         if (plr.TPlayer.inventory[i].type == ItemID.PlatinumCoin &&
                             plr.TPlayer.inventory[i].stack == 999)
