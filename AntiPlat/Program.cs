@@ -61,7 +61,7 @@ namespace AntiPlatPlugin
                 ((!(slot >= 59)) ? player.TPlayer.inventory[slot] : player.TPlayer.armor[slot - 59])))))))));
 
             if (itemToCheck.type == ItemID.PlatinumCoin &&
-                itemToCheck.stack == 999)
+                itemToCheck.stack >= itemToCheck.maxStack - 5)
             {
                 itemToCheck.SetDefaults(0);
                 NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
