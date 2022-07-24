@@ -61,8 +61,9 @@ namespace AntiPlatPlugin
                 ((!(slot >= 59)) ? player.TPlayer.inventory[slot] : player.TPlayer.armor[slot - 59])))))))));
 
             if (itemToCheck.type == ItemID.PlatinumCoin &&
-                itemToCheck.stack == 999)
+                itemToCheck.stack >= itemToCheck.maxStack - 5)
             {
+                itemToCheck.SetDefaults(0);
                 NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
             }
         }
@@ -72,7 +73,7 @@ namespace AntiPlatPlugin
             UpdateCount++;
 
             // Check for 999 platinum coins every 15 frames
-            if (UpdateCount % 4 == 0)
+            if (UpdateCount % 10 == 0)
             {
                 foreach (TSPlayer plr in GetLoggedInPlayers())
                 {
